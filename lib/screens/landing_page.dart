@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LandingPage extends StatelessWidget {
   @override
@@ -31,8 +32,10 @@ class LandingPage extends StatelessWidget {
             top: 40,
             right: 20,
             child: TextButton(
-              onPressed: () {
-                // Handle "Later" action
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setString('username', 'Guest');
+                Navigator.pushReplacementNamed(context, '/home');
               },
               child: const Text(
                 'Later',
@@ -54,7 +57,7 @@ class LandingPage extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.teal,
-                      backgroundColor: Colors.white, // Button text color
+                      backgroundColor: Colors.white,
                       minimumSize: const Size(200, 50),
                     ),
                     child: const Text('Login'),
@@ -66,7 +69,7 @@ class LandingPage extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor: Colors.teal, // Button text color
+                      backgroundColor: Colors.teal,
                       minimumSize: const Size(200, 50),
                     ),
                     child: const Text('Create a New Account'),
