@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:math';
 
 class ApiService {
   static const String baseUrl = 'https://fakestoreapi.com';
@@ -33,6 +34,34 @@ class ApiService {
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to log in: ${response.statusCode}');
+    }
+  }
+
+  static Future<List<dynamic>> getRandomProducts(int count) async {
+    final response = await http.get(Uri.parse('$baseUrl/products'));
+
+    if (response.statusCode == 200) {
+      try {
+        final List<dynamic> products = json.decode(response.body);
+        final random = Random();
+
+        // Normalize prices to double
+        final normalizedProducts = products.map((product) {
+          product['price'] = (product['price'] is int)
+              ? (product['price'] as int).toDouble()
+              : product['price'];
+          return product;
+        }).toList();
+
+        return List.generate(
+          count,
+          (_) => normalizedProducts[random.nextInt(normalizedProducts.length)],
+        );
+      } catch (e) {
+        throw FormatException("Invalid JSON format: $e");
+      }
+    } else {
+      throw Exception('Failed to load products. Response: ${response.body}');
     }
   }
 }

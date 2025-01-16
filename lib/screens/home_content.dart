@@ -1,6 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // Import for toast
+import '../services/api_service.dart';
+import '../widgets/featured_card.dart';
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
+  @override
+  _HomeContentState createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  List<dynamic> _products = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts();
+  }
+
+  Future<void> _fetchProducts() async {
+    try {
+      final products = await ApiService.getRandomProducts(3);
+      setState(() {
+        _products = products;
+      });
+    } catch (error) {
+      // Show a toast message if there's an error
+      Fluttertoast.showToast(
+        msg: "Failed to load products: $error",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+
+      // Log the error to the console for better debugging
+      print("Error fetching products: $error");
+
+      // Set dummy data for testing
+      setState(() {
+        _products = [
+          {
+            'title': 'Dummy Product 1',
+            'description': 'This is a dummy product description.',
+            'price': 29.99
+          },
+          {
+            'title': 'Dummy Product 2',
+            'description': 'This is another dummy product description.',
+            'price': 19.99
+          },
+          {
+            'title': 'Dummy Product 3',
+            'description': 'Yet another dummy product description.',
+            'price': 9.99
+          },
+        ];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,22 +75,18 @@ class HomeContent extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(0.0),
-                          child: Image.asset(
-                            'assets/images/sun.png', // Path to your image
-                            width: 30, // Set the width of the image
-                            height: 30, // Set the height of the image
-                          ),
-                        ),
+                      Image.asset(
+                        'assets/images/sun.png',
+                        width: 30,
+                        height: 30,
                       ),
-                      // SizedBox(width: 2),
-                      Text(
+                      const SizedBox(width: 4),
+                      const Text(
                         'Good Morning',
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Sofia Pro',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
                           color: Colors.black,
                         ),
                       ),
@@ -44,14 +98,16 @@ class HomeContent extends StatelessWidget {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Text(
                           'Loading...',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: Color(0xFF0A2533)),
                         );
                       }
                       return Text(
                         snapshot.data ?? 'Guest',
                         style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.grey,
+                          fontFamily: 'Sofia Pro',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0A2533),
                         ),
                       );
                     },
@@ -59,7 +115,8 @@ class HomeContent extends StatelessWidget {
                 ],
               ),
               IconButton(
-                icon: const Icon(Icons.shopping_cart, color: Colors.black),
+                icon:
+                    Image.asset('assets/images/cart.png', color: Colors.black),
                 onPressed: () {
                   // Handle cart button press
                 },
@@ -69,6 +126,7 @@ class HomeContent extends StatelessWidget {
         ),
         toolbarHeight: 100.0,
       ),
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,51 +135,30 @@ class HomeContent extends StatelessWidget {
             child: Text(
               'Featured',
               style: TextStyle(
+                fontFamily: 'Sofia Pro',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
             ),
           ),
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 4, // Number of featured cards
-              itemBuilder: (context, index) {
-                return Container(
-                  width: 264,
+          _products.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : SizedBox(
                   height: 172,
-                  margin: const EdgeInsets.only(left: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.teal[50],
-                    borderRadius: BorderRadius.circular(12),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _products.length,
+                    itemBuilder: (context, index) {
+                      final product = _products[index];
+                      return FeaturedCard(
+                        title: product['title'],
+                        description: product['description'],
+                        price: product['price'],
+                      );
+                    },
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.star, size: 50, color: Colors.teal),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Item $index',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '\$${(index + 1) * 10}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+                ),
         ],
       ),
     );
@@ -129,7 +166,6 @@ class HomeContent extends StatelessWidget {
 }
 
 Future<String?> _getUsername() async {
-  // Replace with actual shared preferences retrieval logic
   await Future.delayed(const Duration(seconds: 1));
-  return 'John Doe'; // Replace with actual username
+  return 'John Doe'; // Replace with actual username logic
 }
