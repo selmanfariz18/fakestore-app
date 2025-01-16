@@ -87,7 +87,8 @@ class LandingPage extends StatelessWidget {
               },
               child: const Text(
                 'Later',
-                style: TextStyle(color: Colors.white, fontSize: 16),
+                style: TextStyle(
+                    fontFamily: 'Sofia Pro', color: Colors.white, fontSize: 16),
               ),
             ),
           ),
@@ -135,6 +136,7 @@ class LandingPage extends StatelessWidget {
                       child: const Text(
                         'Login',
                         style: TextStyle(
+                          fontFamily: 'Sofia Pro',
                           color: Colors.white,
                           fontSize: 16,
                         ),
