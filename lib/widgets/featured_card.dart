@@ -203,3 +203,178 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 }
+
+class SearchProductCard extends StatefulWidget {
+  final String title;
+  final String imageUrl;
+  final double price;
+
+  const SearchProductCard({
+    required this.title,
+    required this.imageUrl,
+    required this.price,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<SearchProductCard> createState() => _SearchProductCardState();
+}
+
+class _SearchProductCardState extends State<SearchProductCard> {
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100,
+      height: 136, // Adjust width as needed
+      margin: const EdgeInsets.only(left: 16, bottom: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(0.0), // Add margin here
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                  child: Image.network(
+                    widget.imageUrl,
+                    height: 84, // Image height
+                    width: 84,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Sofia Pro',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class EditorsChoiceCard extends StatelessWidget {
+  final String title;
+  final double price;
+  final String imageUrl;
+
+  const EditorsChoiceCard({
+    required this.title,
+    required this.price,
+    required this.imageUrl,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              imageUrl,
+              height: 84,
+              width: 84,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 12,
+                      backgroundImage: AssetImage(
+                        'assets/images/author_placeholder.png', // Replace with actual author image if available
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Author",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.arrow_forward,
+            color: Colors.black,
+          ),
+        ],
+      ),
+    );
+  }
+}

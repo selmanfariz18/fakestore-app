@@ -42,7 +42,7 @@ class _HomeContentState extends State<HomeContent> {
       final categories = await ApiService.getCategories();
       setState(() {
         _categories = categories;
-        _selectedCategory = _categories.first; // Default to the first category
+        _selectedCategory = _categories.first;
       });
     } catch (error) {
       Fluttertoast.showToast(
@@ -133,7 +133,7 @@ class _HomeContentState extends State<HomeContent> {
                 'Featured',
                 style: TextStyle(
                   fontFamily: 'Sofia Pro',
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF0A2533),
                 ),
@@ -168,7 +168,7 @@ class _HomeContentState extends State<HomeContent> {
                     'Category',
                     style: TextStyle(
                       fontFamily: 'Sofia Pro',
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: Color(0xFF0A2533),
                     ),
@@ -256,7 +256,7 @@ class _HomeContentState extends State<HomeContent> {
                     'Popular Recipes',
                     style: TextStyle(
                       fontFamily: 'Sofia Pro',
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: Color(0xFF0A2533),
                     ),

@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
         shape: const CircularNotchedRectangle(),
         notchMargin: 8.0,
         elevation: 5.0,
-        color: Colors.white, // Light background
+        color: Colors.transparent,
         child: SizedBox(
           height: 60,
           child: Row(
