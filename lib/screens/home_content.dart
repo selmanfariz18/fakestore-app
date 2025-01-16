@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // Import for toast
+import 'package:fluttertoast/fluttertoast.dart';
 import '../services/api_service.dart';
 import '../widgets/featured_card.dart';
 
@@ -10,21 +10,23 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   List<dynamic> _products = [];
+  List<String> _categories = [];
+  String _selectedCategory = '';
 
   @override
   void initState() {
     super.initState();
     _fetchProducts();
+    _fetchCategories();
   }
 
   Future<void> _fetchProducts() async {
     try {
-      final products = await ApiService.getRandomProducts(3);
+      final products = await ApiService.getRandomProducts(5);
       setState(() {
         _products = products;
       });
     } catch (error) {
-      // Show a toast message if there's an error
       Fluttertoast.showToast(
         msg: "Failed to load products: $error",
         toastLength: Toast.LENGTH_LONG,
@@ -32,30 +34,24 @@ class _HomeContentState extends State<HomeContent> {
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
+    }
+  }
 
-      // Log the error to the console for better debugging
-      print("Error fetching products: $error");
-
-      // Set dummy data for testing
+  Future<void> _fetchCategories() async {
+    try {
+      final categories = await ApiService.getCategories();
       setState(() {
-        _products = [
-          {
-            'title': 'Dummy Product 1',
-            'description': 'This is a dummy product description.',
-            'price': 29.99
-          },
-          {
-            'title': 'Dummy Product 2',
-            'description': 'This is another dummy product description.',
-            'price': 19.99
-          },
-          {
-            'title': 'Dummy Product 3',
-            'description': 'Yet another dummy product description.',
-            'price': 9.99
-          },
-        ];
+        _categories = categories;
+        _selectedCategory = _categories.first; // Default to the first category
       });
+    } catch (error) {
+      Fluttertoast.showToast(
+        msg: "Failed to load categories: $error",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
@@ -127,39 +123,188 @@ class _HomeContentState extends State<HomeContent> {
         toolbarHeight: 100.0,
       ),
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Featured',
-              style: TextStyle(
-                fontFamily: 'Sofia Pro',
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Featured',
+                style: TextStyle(
+                  fontFamily: 'Sofia Pro',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0A2533),
+                ),
               ),
             ),
-          ),
-          _products.isEmpty
-              ? const Center(child: CircularProgressIndicator())
-              : SizedBox(
-                  height: 172,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _products.length,
-                    itemBuilder: (context, index) {
-                      final product = _products[index];
-                      return FeaturedCard(
-                        title: product['title'],
-                        description: product['description'],
-                        price: product['price'],
-                      );
-                    },
+            _products.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
+                    height: 172,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _products.length,
+                      itemBuilder: (context, index) {
+                        final product = _products[index];
+                        return FeaturedCard(
+                          title: product['title'],
+                          description: product['description'],
+                          price: product['price'],
+                          imageUrl: product['image'],
+                        );
+                      },
+                    ),
                   ),
-                ),
-        ],
+            SizedBox(height: 20),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Category',
+                    style: TextStyle(
+                      fontFamily: 'Sofia Pro',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0A2533),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Handle "See All" button press
+                      // Fluttertoast.showToast(
+                      //   msg: "See All Categories clicked!",
+                      //   toastLength: Toast.LENGTH_SHORT,
+                      //   gravity: ToastGravity.BOTTOM,
+                      //   backgroundColor: Colors.blue,
+                      //   textColor: Colors.white,
+                      // );
+                    },
+                    child: const Text(
+                      'See All',
+                      style: TextStyle(
+                        fontFamily: 'Sofia Pro',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF3DA0A7), // Matches the theme color
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            _categories.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
+                    height: 50,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _categories.length,
+                      itemBuilder: (context, index) {
+                        final category = _categories[index];
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedCategory = category;
+                            });
+                          },
+                          child: Container(
+                            width: 119,
+                            height: 41,
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _selectedCategory == category
+                                  ? const Color(0xFF3DA0A7)
+                                  : Color(0xFFF1F5F5),
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            child: Center(
+                              child: Text(
+                                category,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontFamily: 'Sofia Pro',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: _selectedCategory == category
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+            SizedBox(height: 20),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Popular Recipes',
+                    style: TextStyle(
+                      fontFamily: 'Sofia Pro',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0A2533),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Handle "See All" button press
+                      // Fluttertoast.showToast(
+                      //   msg: "See All Categories clicked!",
+                      //   toastLength: Toast.LENGTH_SHORT,
+                      //   gravity: ToastGravity.BOTTOM,
+                      //   backgroundColor: Colors.blue,
+                      //   textColor: Colors.white,
+                      // );
+                    },
+                    child: const Text(
+                      'See All',
+                      style: TextStyle(
+                        fontFamily: 'Sofia Pro',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF3DA0A7), // Matches the theme color
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            _products.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _products.length,
+                      itemBuilder: (context, index) {
+                        final product = _products[index];
+                        return ProductCard(
+                          title: product['title'],
+                          // description: product['description'],
+                          price: product['price'],
+                          imageUrl: product['image'],
+                        );
+                      },
+                    ),
+                  ),
+          ],
+        ),
       ),
     );
   }

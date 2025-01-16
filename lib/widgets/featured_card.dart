@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FeaturedCard extends StatelessWidget {
   final String title;
@@ -10,6 +11,7 @@ class FeaturedCard extends StatelessWidget {
     required this.description,
     required this.price,
     Key? key,
+    required imageUrl,
   }) : super(key: key);
 
   @override
@@ -56,6 +58,147 @@ class FeaturedCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ProductCard extends StatefulWidget {
+  final String title;
+  final String imageUrl;
+  final double price;
+
+  const ProductCard({
+    required this.title,
+    required this.imageUrl,
+    required this.price,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoriteStatus();
+  }
+
+  // Load the favorite status from local storage
+  Future<void> _loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isFavorite = prefs.getBool(widget.title) ?? false;
+    });
+  }
+
+  // Toggle favorite status and save it to local storage
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+    await prefs.setBool(widget.title, isFavorite);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 200,
+      height: 240, // Adjust width as needed
+      margin: const EdgeInsets.only(left: 16, bottom: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0), // Add margin here
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                  child: Image.network(
+                    widget.imageUrl,
+                    height: 128, // Image height
+                    width: 168,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: _toggleFavorite,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Sofia Pro',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '\$${widget.price}',
+                  style: const TextStyle(
+                    fontFamily: 'Sofia Pro',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
