@@ -343,6 +343,7 @@ class EditorsChoiceCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
+                    fontFamily: 'Sofia Pro',
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -353,13 +354,14 @@ class EditorsChoiceCard extends StatelessWidget {
                     const CircleAvatar(
                       radius: 12,
                       backgroundImage: AssetImage(
-                        'assets/images/author_placeholder.png', // Replace with actual author image if available
+                        'assets/images/Icon.png', // Replace with actual author image if available
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       "Author",
                       style: const TextStyle(
+                        fontFamily: 'Sofia Pro',
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -374,6 +376,94 @@ class EditorsChoiceCard extends StatelessWidget {
             color: Colors.black,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ShoppingItemCard extends StatelessWidget {
+  final String name;
+  final String imagePath;
+  final int count;
+  final VoidCallback onIncrement;
+  final VoidCallback onDecrement;
+
+  ShoppingItemCard({
+    required this.name,
+    required this.imagePath,
+    required this.count,
+    required this.onIncrement,
+    required this.onDecrement,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 327,
+      height: 80,
+      child: Card(
+        color: Colors.white,
+        shadowColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Image.asset(
+                    imagePath.isNotEmpty
+                        ? imagePath
+                        : 'assets/images/placeholder.png',
+                    width: 48,
+                    height: 48,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.image_not_supported, size: 40);
+                    },
+                  ),
+                  SizedBox(width: 15),
+                  Text(
+                    name,
+                    style: TextStyle(
+                        fontFamily: 'Sofia Pro',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: onDecrement,
+                    icon: Image.asset(
+                      'assets/images/Negative.png',
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
+                  Text(
+                    count.toString(),
+                    style: TextStyle(
+                        fontFamily: 'Sofia Pro',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400),
+                  ),
+                  IconButton(
+                    onPressed: onIncrement,
+                    icon: Image.asset(
+                      'assets/images/Plus.png',
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

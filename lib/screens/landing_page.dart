@@ -77,7 +77,7 @@ class LandingPage extends StatelessWidget {
 
           // "Later" button
           Positioned(
-            top: 40,
+            top: 60,
             right: 20,
             child: TextButton(
               onPressed: () async {

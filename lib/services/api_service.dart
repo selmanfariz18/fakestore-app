@@ -74,4 +74,30 @@ class ApiService {
       throw Exception('Failed to fetch categories');
     }
   }
+
+  static Future<Map<String, dynamic>> fetchProductDetails() async {
+    try {
+      // Generate a random number between 1 and 40
+      final randomProductId = Random().nextInt(40) + 1;
+
+      // Fetch the product details using the random product ID
+      final response =
+          await http.get(Uri.parse('$baseUrl/products/$randomProductId'));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load product details');
+      }
+    } catch (e) {
+      // If API fails, return default data
+      return {
+        'title': 'Healthy Taco Salad',
+        'description':
+            'This Healthy Taco Salad is the universal delight of taco night',
+        'price': '10.99',
+        // 'image': 'assets/images/taco_salad.jpg',
+      };
+    }
+  }
 }
