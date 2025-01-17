@@ -70,25 +70,28 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        toolbarHeight: 100.0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context); // Navigate back
           },
         ),
-        title: const Padding(
-          padding: EdgeInsets.only(left: 98, right: 0),
-          child: Text(
-            'Search',
-            style: TextStyle(
-              fontFamily: 'Sofia Pro',
-              color: Colors.black,
-              fontWeight: FontWeight.w700,
-              fontSize: 24,
+        title: Padding(
+          padding: const EdgeInsets.only(
+              right: 48.0), // Adjust this value based on the back button width
+          child: const Center(
+            child: Text(
+              'Search',
+              style: TextStyle(
+                fontFamily: 'Sofia Pro',
+                color: Colors.black,
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
+              ),
             ),
           ),
         ),
-        toolbarHeight: 100.0,
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
