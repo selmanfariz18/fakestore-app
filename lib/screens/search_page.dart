@@ -274,21 +274,14 @@ class _SearchPageState extends State<SearchPage> {
               ),
               _products.isEmpty
                   ? const Center(child: CircularProgressIndicator())
-                  : SizedBox(
-                      height: 200,
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: _products.length,
-                        itemBuilder: (context, index) {
-                          final product = _products[index];
-                          return EditorsChoiceCard(
-                            title: product['title'],
-                            // description: product['description'],
-                            price: product['price'],
-                            imageUrl: product['image'],
-                          );
-                        },
-                      ),
+                  : Column(
+                      children: _products.map((product) {
+                        return EditorsChoiceCard(
+                          title: product['title'],
+                          price: product['price'],
+                          imageUrl: product['image'],
+                        );
+                      }).toList(),
                     ),
             ],
           ),

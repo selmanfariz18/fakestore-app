@@ -30,12 +30,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white.withOpacity(0.9),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8.0,
-        elevation: 5.0,
-        color: Colors.transparent,
+        elevation: 0,
+        color: Colors.white,
         child: SizedBox(
           height: 60,
           child: Row(
@@ -84,7 +85,7 @@ class _HomePageState extends State<HomePage> {
           });
         },
         backgroundColor: Colors.black, // Match dark FAB background
-        elevation: 4,
+        elevation: 0,
         shape: const CircleBorder(),
         child: Image.asset(
           'assets/images/Chef.png', // Path to your image
