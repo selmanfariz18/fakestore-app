@@ -58,235 +58,241 @@ class _HomeContentState extends State<HomeContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/sun.png',
-                        width: 30,
-                        height: 30,
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
-                        'Good Morning',
-                        style: TextStyle(
-                          fontFamily: 'Sofia Pro',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/sun.png',
+                          width: 30,
+                          height: 30,
                         ),
-                      ),
-                    ],
-                  ),
-                  FutureBuilder<String?>(
-                    future: _getUsername(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Text(
-                          'Loading...',
-                          style: TextStyle(color: Color(0xFF0A2533)),
-                        );
-                      }
-                      return Text(
-                        snapshot.data ?? 'Guest',
-                        style: const TextStyle(
-                          fontFamily: 'Sofia Pro',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF0A2533),
+                        const SizedBox(width: 4),
+                        const Text(
+                          'Good Morning',
+                          style: TextStyle(
+                            fontFamily: 'Sofia Pro',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              IconButton(
-                icon:
-                    Image.asset('assets/images/cart.png', color: Colors.black),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
-        toolbarHeight: 100.0,
-      ),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Featured',
-                style: TextStyle(
-                  fontFamily: 'Sofia Pro',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0A2533),
-                ),
-              ),
-            ),
-            _products.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : SizedBox(
-                    height: 172,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _products.length,
-                      itemBuilder: (context, index) {
-                        final product = _products[index];
-                        return FeaturedCard(
-                          title: product['title'],
-                          description: product['description'],
-                          price: product['price'],
-                          imageUrl: product['image'],
-                        );
-                      },
+                      ],
                     ),
-                  ),
-            SizedBox(height: 20),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Category',
-                    style: TextStyle(
-                      fontFamily: 'Sofia Pro',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF0A2533),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'See All',
-                      style: TextStyle(
-                        fontFamily: 'Sofia Pro',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF3DA0A7),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            _categories.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : SizedBox(
-                    height: 50,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _categories.length,
-                      itemBuilder: (context, index) {
-                        final category = _categories[index];
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedCategory = category;
-                            });
-                          },
-                          child: Container(
-                            width: 119,
-                            height: 41,
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _selectedCategory == category
-                                  ? const Color(0xFF3DA0A7)
-                                  : Color(0xFFF1F5F5),
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: Center(
-                              child: Text(
-                                category,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontFamily: 'Sofia Pro',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: _selectedCategory == category
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                              ),
-                            ),
+                    FutureBuilder<String?>(
+                      future: _getUsername(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text(
+                            'Loading...',
+                            style: TextStyle(color: Color(0xFF0A2533)),
+                          );
+                        }
+                        return Text(
+                          snapshot.data ?? 'Guest',
+                          style: const TextStyle(
+                            fontFamily: 'Sofia Pro',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF0A2533),
                           ),
                         );
                       },
                     ),
-                  ),
-            SizedBox(height: 20),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Popular Recipes',
-                    style: TextStyle(
-                      fontFamily: 'Sofia Pro',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF0A2533),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'See All',
-                      style: TextStyle(
-                        fontFamily: 'Sofia Pro',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF3DA0A7),
+                  ],
+                ),
+                IconButton(
+                  icon: Image.asset('assets/images/cart.png',
+                      color: Colors.black),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+          toolbarHeight: 100.0,
+        ),
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Featured',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0A2533),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    _products.isEmpty
+                        ? Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                            height: 172,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _products.length,
+                              itemBuilder: (context, index) {
+                                final product = _products[index];
+                                return FeaturedCard(
+                                  title: product['title'],
+                                  description: product['description'],
+                                  price: product['price'],
+                                  imageUrl: product['image'],
+                                );
+                              },
+                            ),
+                          ),
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Category',
+                            style: TextStyle(
+                              fontFamily: 'Sofia Pro',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF0A2533),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text(
+                              'See All',
+                              style: TextStyle(
+                                fontFamily: 'Sofia Pro',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF3DA0A7),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _categories.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                            height: 50,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _categories.length,
+                              itemBuilder: (context, index) {
+                                final category = _categories[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedCategory = category;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 119,
+                                    height: 41,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _selectedCategory == category
+                                          ? const Color(0xFF3DA0A7)
+                                          : Color(0xFFF1F5F5),
+                                      borderRadius: BorderRadius.circular(40),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        category,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          fontFamily: 'Sofia Pro',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: _selectedCategory == category
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Popular Recipes',
+                            style: TextStyle(
+                              fontFamily: 'Sofia Pro',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF0A2533),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text(
+                              'See All',
+                              style: TextStyle(
+                                fontFamily: 'Sofia Pro',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF3DA0A7),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _products.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                            height: 250,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _products.length,
+                              itemBuilder: (context, index) {
+                                final product = _products[index];
+                                return ProductCard(
+                                  title: product['title'],
+                                  price: product['price'],
+                                  imageUrl: product['image'],
+                                  id: product['id'],
+                                );
+                              },
+                            ),
+                          ),
+                  ],
+                ),
               ),
             ),
-            _products.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : SizedBox(
-                    height: 250,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _products.length,
-                      itemBuilder: (context, index) {
-                        final product = _products[index];
-                        return ProductCard(
-                          title: product['title'],
-                          price: product['price'],
-                          imageUrl: product['image'],
-                          id: product['id'],
-                        );
-                      },
-                    ),
-                  ),
           ],
-        ),
-      ),
-    );
+        ));
   }
 }
 
