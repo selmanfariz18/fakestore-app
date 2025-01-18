@@ -22,11 +22,10 @@ class FeaturedCard extends StatelessWidget {
       margin: const EdgeInsets.only(left: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: const Color(0xFF3DA0A7), // Background color
+        color: const Color(0xFF3DA0A7),
         image: const DecorationImage(
-          image: AssetImage(
-              'assets/images/card_background.png'), // Background image
-          fit: BoxFit.cover, // Fit the image to cover the card
+          image: AssetImage('assets/images/card_background.png'),
+          fit: BoxFit.cover,
         ),
       ),
       child: Padding(
@@ -37,8 +36,8 @@ class FeaturedCard extends StatelessWidget {
           children: [
             Text(
               title,
-              maxLines: 2, // Limit to 2 lines
-              overflow: TextOverflow.ellipsis, // Add ellipsis for overflow
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontFamily: 'Sofia Pro',
                 fontWeight: FontWeight.w700,
@@ -64,11 +63,13 @@ class FeaturedCard extends StatelessWidget {
 }
 
 class ProductCard extends StatefulWidget {
+  final int id;
   final String title;
   final String imageUrl;
   final double price;
 
   const ProductCard({
+    required this.id,
     required this.title,
     required this.imageUrl,
     required this.price,
@@ -81,6 +82,7 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   bool isFavorite = false;
+  List<String> favoriteProductIds = [];
 
   @override
   void initState() {
@@ -88,28 +90,33 @@ class _ProductCardState extends State<ProductCard> {
     _loadFavoriteStatus();
   }
 
-  // Load the favorite status from local storage
   Future<void> _loadFavoriteStatus() async {
     final prefs = await SharedPreferences.getInstance();
+    favoriteProductIds = prefs.getStringList('favorite_products') ?? [];
     setState(() {
-      isFavorite = prefs.getBool(widget.title) ?? false;
+      isFavorite = favoriteProductIds.contains(widget.id.toString());
     });
   }
 
-  // Toggle favorite status and save it to local storage
+  // Toggle favorite status and save it to SharedPreferences
   Future<void> _toggleFavorite() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
+      if (isFavorite) {
+        favoriteProductIds.remove(widget.id.toString());
+      } else {
+        favoriteProductIds.add(widget.id.toString());
+      }
       isFavorite = !isFavorite;
     });
-    await prefs.setBool(widget.title, isFavorite);
+    await prefs.setStringList('favorite_products', favoriteProductIds);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 200,
-      height: 240, // Adjust width as needed
+      height: 240,
       margin: const EdgeInsets.only(left: 16, bottom: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -128,7 +135,7 @@ class _ProductCardState extends State<ProductCard> {
           Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0), // Add margin here
+                padding: const EdgeInsets.all(8.0),
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -136,7 +143,7 @@ class _ProductCardState extends State<ProductCard> {
                   ),
                   child: Image.network(
                     widget.imageUrl,
-                    height: 128, // Image height
+                    height: 128,
                     width: 168,
                     fit: BoxFit.cover,
                   ),
@@ -151,7 +158,8 @@ class _ProductCardState extends State<ProductCard> {
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      shape: BoxShape.circle,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
@@ -161,7 +169,7 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                     child: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.red,
+                      color: isFavorite ? Color(0xFF70B9BE) : Color(0xFF130F26),
                       size: 20,
                     ),
                   ),
@@ -232,7 +240,7 @@ class _SearchProductCardState extends State<SearchProductCard> {
   Widget build(BuildContext context) {
     return Container(
       width: 100,
-      height: 136, // Adjust width as needed
+      height: 136,
       margin: const EdgeInsets.only(left: 16, bottom: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -251,7 +259,7 @@ class _SearchProductCardState extends State<SearchProductCard> {
           Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.all(0.0), // Add margin here
+                padding: const EdgeInsets.all(0.0),
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -259,7 +267,7 @@ class _SearchProductCardState extends State<SearchProductCard> {
                   ),
                   child: Image.network(
                     widget.imageUrl,
-                    height: 84, // Image height
+                    height: 84,
                     width: 84,
                     fit: BoxFit.cover,
                   ),
@@ -354,7 +362,7 @@ class EditorsChoiceCard extends StatelessWidget {
                     const CircleAvatar(
                       radius: 12,
                       backgroundImage: AssetImage(
-                        'assets/images/Icon.png', // Replace with actual author image if available
+                        'assets/images/Icon.png',
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -465,6 +473,153 @@ class ShoppingItemCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class FavouriteCard extends StatefulWidget {
+  final String title;
+  final String imageUrl;
+  final double price;
+  final num id;
+
+  const FavouriteCard({
+    required this.title,
+    required this.imageUrl,
+    required this.price,
+    required this.id,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<FavouriteCard> createState() => _FavouriteCardState();
+}
+
+class _FavouriteCardState extends State<FavouriteCard> {
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoriteStatus();
+  }
+
+  // Load the favorite status from local storage
+  Future<void> _loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      // Use the product's id (converted to string) to store/retrieve the favorite status
+      isFavorite = prefs.getBool(widget.id.toString()) ?? false;
+    });
+  }
+
+  // Toggle favorite status and save it to local storage
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+    // Save the favorite status with the product's id (converted to string) as the key
+    await prefs.setBool(widget.id.toString(), isFavorite);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 156,
+      height: 198,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                    child: Image.network(
+                      widget.imageUrl,
+                      height: 88,
+                      width: 132,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: _toggleFavorite,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.favorite,
+                      color: Color(0xFF70B9BE),
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Sofia Pro',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '\$${widget.price}',
+                  style: const TextStyle(
+                    fontFamily: 'Sofia Pro',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -113,9 +113,7 @@ class _HomeContentState extends State<HomeContent> {
               IconButton(
                 icon:
                     Image.asset('assets/images/cart.png', color: Colors.black),
-                onPressed: () {
-                  // Handle cart button press
-                },
+                onPressed: () {},
               ),
             ],
           ),
@@ -174,23 +172,14 @@ class _HomeContentState extends State<HomeContent> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      // Handle "See All" button press
-                      // Fluttertoast.showToast(
-                      //   msg: "See All Categories clicked!",
-                      //   toastLength: Toast.LENGTH_SHORT,
-                      //   gravity: ToastGravity.BOTTOM,
-                      //   backgroundColor: Colors.blue,
-                      //   textColor: Colors.white,
-                      // );
-                    },
+                    onPressed: () {},
                     child: const Text(
                       'See All',
                       style: TextStyle(
                         fontFamily: 'Sofia Pro',
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF3DA0A7), // Matches the theme color
+                        color: Color(0xFF3DA0A7),
                       ),
                     ),
                   ),
@@ -262,23 +251,14 @@ class _HomeContentState extends State<HomeContent> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      // Handle "See All" button press
-                      // Fluttertoast.showToast(
-                      //   msg: "See All Categories clicked!",
-                      //   toastLength: Toast.LENGTH_SHORT,
-                      //   gravity: ToastGravity.BOTTOM,
-                      //   backgroundColor: Colors.blue,
-                      //   textColor: Colors.white,
-                      // );
-                    },
+                    onPressed: () {},
                     child: const Text(
                       'See All',
                       style: TextStyle(
                         fontFamily: 'Sofia Pro',
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF3DA0A7), // Matches the theme color
+                        color: Color(0xFF3DA0A7),
                       ),
                     ),
                   ),
@@ -296,9 +276,9 @@ class _HomeContentState extends State<HomeContent> {
                         final product = _products[index];
                         return ProductCard(
                           title: product['title'],
-                          // description: product['description'],
                           price: product['price'],
                           imageUrl: product['image'],
+                          id: product['id'],
                         );
                       },
                     ),
@@ -312,5 +292,5 @@ class _HomeContentState extends State<HomeContent> {
 
 Future<String?> _getUsername() async {
   await Future.delayed(const Duration(seconds: 1));
-  return 'John Doe'; // Replace with actual username logic
+  return 'John Doe';
 }

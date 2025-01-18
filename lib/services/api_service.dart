@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   static const String baseUrl = 'https://fakestoreapi.com';
@@ -90,7 +91,6 @@ class ApiService {
         throw Exception('Failed to load product details');
       }
     } catch (e) {
-      // If API fails, return default data
       return {
         'title': 'Healthy Taco Salad',
         'description':
@@ -99,5 +99,49 @@ class ApiService {
         // 'image': 'assets/images/taco_salad.jpg',
       };
     }
+  }
+
+  static Future<List<dynamic>> getFavoriteProducts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? favoriteIds = prefs.getStringList('favorite_products');
+
+    if (favoriteIds == null || favoriteIds.isEmpty) {
+      return [];
+    }
+
+    final List<dynamic> favoriteProducts = [];
+    for (String id in favoriteIds) {
+      final response = await http.get(Uri.parse('$baseUrl/products/$id'));
+
+      if (response.statusCode == 200) {
+        try {
+          if (response.body.isNotEmpty) {
+            favoriteProducts.add(json.decode(response.body));
+          } else {
+            print('Empty response for product ID: $id');
+          }
+        } catch (e) {
+          print('Error decoding product $id: $e');
+        }
+      } else {
+        print(
+            'Failed to load product ID: $id. Status code: ${response.statusCode}');
+      }
+    }
+    return favoriteProducts;
+  }
+
+  // **Helper Method: Save Favorite Product IDs**
+  static Future<void> toggleFavoriteProduct(String productId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? favoriteIds = prefs.getStringList('favorite_products') ?? [];
+
+    if (favoriteIds.contains(productId)) {
+      favoriteIds.remove(productId.toString());
+    } else {
+      favoriteIds.add(productId.toString());
+    }
+
+    await prefs.setStringList('favorite_products', favoriteIds);
   }
 }
