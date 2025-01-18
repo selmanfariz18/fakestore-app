@@ -371,10 +371,11 @@ class EditorsChoiceCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
-            Icons.arrow_forward,
-            color: Colors.black,
-          ),
+          Image.asset(
+            'assets/images/ArrowRight.png',
+            width: 24,
+            height: 24,
+          )
         ],
       ),
     );
