@@ -141,12 +141,21 @@ class _ProductCardState extends State<ProductCard> {
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
                   ),
-                  child: Image.network(
-                    widget.imageUrl,
-                    height: 128,
-                    width: 168,
-                    fit: BoxFit.cover,
-                  ),
+                  child: widget.imageUrl ==
+                          'dummy' // Check if it's a dummy product
+                      ? Image.asset(
+                          'assets/images/card_background.png', // Replace with your dummy image path
+                          height: 128,
+                          width: 168,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.network(
+                          widget
+                              .imageUrl, // Use the network image URL for real products
+                          height: 128,
+                          width: 168,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               Positioned(
@@ -265,12 +274,21 @@ class _SearchProductCardState extends State<SearchProductCard> {
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
                   ),
-                  child: Image.network(
-                    widget.imageUrl,
-                    height: 84,
-                    width: 84,
-                    fit: BoxFit.cover,
-                  ),
+                  child: widget.imageUrl ==
+                          'dummy' // Check if it's a dummy image URL
+                      ? Image.asset(
+                          'assets/images/card_background.png', // Replace with your dummy image path
+                          height: 84,
+                          width: 84,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.network(
+                          widget
+                              .imageUrl, // Use the network image URL for real images
+                          height: 84,
+                          width: 84,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
             ],
@@ -334,12 +352,19 @@ class EditorsChoiceCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              imageUrl,
-              height: 84,
-              width: 84,
-              fit: BoxFit.cover,
-            ),
+            child: imageUrl == 'dummy' // Check if it's a dummy image URL
+                ? Image.asset(
+                    'assets/images/card_background.png', // Replace with your dummy image path
+                    height: 84,
+                    width: 84,
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    imageUrl, // Use the network image URL for real images
+                    height: 84,
+                    width: 84,
+                    fit: BoxFit.cover,
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(
