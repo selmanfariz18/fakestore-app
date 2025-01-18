@@ -25,10 +25,9 @@ This Flutter application replicates a food recommendation UI with e-commerce con
 
 ## Demo Video
 
-<video width="100%" controls>
-  <source src="demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/selmanfariz18/fakestore-app/blob/main/demo.mp4
+
+[Download it from here](demo.mp4).
 
 ## Getting Started
 
