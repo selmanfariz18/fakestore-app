@@ -31,7 +31,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       });
 
       Fluttertoast.showToast(
-        msg: "Failed to load favorite products: $error",
+        msg: "Failed to load favorite products, No internet!!",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,

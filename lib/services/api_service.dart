@@ -18,7 +18,7 @@ class ApiService {
       print('Response: ${response.body}');
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to sign up: ${response.statusCode}');
+      throw Exception('Failed to sign up');
     }
   }
 
@@ -34,7 +34,7 @@ class ApiService {
       print('Response: ${response.body}');
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to log in: ${response.statusCode}');
+      throw Exception('Failed to log in');
     }
   }
 
@@ -59,10 +59,10 @@ class ApiService {
           (_) => normalizedProducts[random.nextInt(normalizedProducts.length)],
         );
       } catch (e) {
-        throw FormatException("Invalid JSON format: $e");
+        throw FormatException("Backend Failure!!");
       }
     } else {
-      throw Exception('Failed to load products. Response: ${response.body}');
+      throw Exception('No internet!!');
     }
   }
 
@@ -72,7 +72,7 @@ class ApiService {
       final categories = json.decode(response.body) as List<dynamic>;
       return categories.cast<String>();
     } else {
-      throw Exception('Failed to fetch categories');
+      throw Exception('Failed to fetch categories, No internet!!');
     }
   }
 
@@ -88,7 +88,7 @@ class ApiService {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
-        throw Exception('Failed to load product details');
+        throw Exception('Failed to load product details, No internet!!');
       }
     } catch (e) {
       return {
@@ -118,14 +118,13 @@ class ApiService {
           if (response.body.isNotEmpty) {
             favoriteProducts.add(json.decode(response.body));
           } else {
-            print('Empty response for product ID: $id');
+            print('No product available');
           }
         } catch (e) {
-          print('Error decoding product $id: $e');
+          print('No product is here');
         }
       } else {
-        print(
-            'Failed to load product ID: $id. Status code: ${response.statusCode}');
+        print('Failed to load product');
       }
     }
     return favoriteProducts;

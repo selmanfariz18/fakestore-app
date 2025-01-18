@@ -1,16 +1,55 @@
-# fakestore_app
+# Junior Flutter Developer Task | Lascade
 
-A new Flutter project.
+## Objective
+
+This Flutter application replicates a food recommendation UI with e-commerce content. Static assets are used where API data is not applicable.
+
+---
+
+## Features
+
+- **UI Implementation:**
+  - Pixel-perfect design matching the Figma file.
+  - Responsive layout compatible with various screen sizes.
+- **API Integration:**
+  - Fetches and displays product listings, categories, and featured products dynamically using the Fake Store API.
+- **State Management:**
+  - Efficient state updates and widget rebuilding using the **Provider** package.
+- **Error Handling:**
+  - User-friendly error messages for API failures.
+  - Loading indicators while data is being fetched.
+- **Static Assets:**
+  - Includes static placeholders, icons, and banners.
+
+---
+
+## Demo Video
+
+<video width="100%" controls>
+  <source src="demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter SDK (v3.x or above)
+- Android Studio/VS Code (optional but recommended)
+- A physical or virtual device to run the app
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/lascade-flutter-task.git
+   cd lascade-flutter-task
+   ```
+2. Install dependencies:
+   ```bash
+   flutter pub get
+   ```
+3. Run the app:
+   ```bash
+   flutter run
+   ```

@@ -36,7 +36,7 @@ class _HomeContentState extends State<HomeContent> {
       });
     } catch (error) {
       Fluttertoast.showToast(
-        msg: "Failed to load products: $error",
+        msg: "Failed to load products, No internet!!",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -108,7 +108,7 @@ class _HomeContentState extends State<HomeContent> {
       });
     } catch (error) {
       Fluttertoast.showToast(
-        msg: "Failed to load categories: $error",
+        msg: "Failed to load categories:  No internet!!",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -360,6 +360,9 @@ class _HomeContentState extends State<HomeContent> {
                               },
                             ),
                           ),
+                    SizedBox(
+                      height: 60,
+                    )
                   ],
                 ),
               ),
