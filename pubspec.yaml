@@ -97,6 +97,9 @@ flutter:
     - assets/images/profile.png
     - assets/images/ArrowRight.png
     - assets/images/Setting.png
+    - assets/images/menu_no_color.png
+    - assets/images/user_color.png
+    - assets/images/Search_color.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

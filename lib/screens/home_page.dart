@@ -43,23 +43,34 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                icon: Image.asset(
-                  'assets/images/home.png',
-                  color: _selectedIndex == 0
-                      ? Color(0xFF70B9BE)
-                      : Color(0xFF97A2B0),
-                  width: 30, // Set the size of the icon
-                ),
+                icon: _selectedIndex == 0
+                    ? Image.asset(
+                        'assets/images/home.png',
+                        width: 24,
+                        height: 24,
+                      )
+                    : Image.asset(
+                        'assets/images/menu_no_color.png',
+                        width: 24,
+                        height: 24,
+                      ),
                 onPressed: () => _onItemTapped(0),
               ),
               IconButton(
-                icon: Image.asset('assets/images/search.png',
-                    color: _selectedIndex == 1
-                        ? Color(0xFF70B9BE)
-                        : Color(0xFF97A2B0)),
+                icon: _selectedIndex == 1
+                    ? Image.asset(
+                        'assets/images/Search_color.png',
+                        width: 24,
+                        height: 24,
+                      )
+                    : Image.asset(
+                        'assets/images/search.png',
+                        width: 24,
+                        height: 24,
+                      ),
                 onPressed: () => _onItemTapped(1),
               ),
-              const SizedBox(width: 40), // Space for FAB
+              const SizedBox(width: 40), // Space for notch
               IconButton(
                 icon: Image.asset('assets/images/bell.png',
                     color: _selectedIndex == 3
@@ -68,10 +79,17 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () => _onItemTapped(3),
               ),
               IconButton(
-                icon: Image.asset('assets/images/user.png',
-                    color: _selectedIndex == 4
-                        ? Color(0xFF70B9BE)
-                        : Color(0xFF97A2B0)),
+                icon: _selectedIndex == 4
+                    ? Image.asset(
+                        'assets/images/user_color.png',
+                        width: 24,
+                        height: 24,
+                      )
+                    : Image.asset(
+                        'assets/images/user.png',
+                        width: 24,
+                        height: 24,
+                      ),
                 onPressed: () => _onItemTapped(4),
               ),
             ],
@@ -81,18 +99,16 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            _selectedIndex = 2; // Navigate to MagicPage
+            _selectedIndex = 2;
           });
         },
-        backgroundColor: Colors.black, // Match dark FAB background
-        elevation: 0,
+        backgroundColor: Color(0xFF042628),
         shape: const CircleBorder(),
         child: Image.asset(
-          'assets/images/Chef.png', // Path to your image
-          // color: Colors.white, // Optionally apply color filter
-          width: 24, // Set the size of the image
-          height: 24, // Set the size of the image
-        ), // Chef icon
+          'assets/images/Chef.png',
+          width: 24,
+          height: 24,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
