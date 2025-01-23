@@ -622,7 +622,7 @@ class _FavouriteCardState extends State<FavouriteCard> {
               children: [
                 Text(
                   widget.title,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontFamily: 'Sofia Pro',
