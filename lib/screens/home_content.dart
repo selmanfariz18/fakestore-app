@@ -1,9 +1,33 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import '../services/api_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/product_provider.dart';
 import '../widgets/featured_card.dart';
+// Assuming ProductCard is in widgets and was missed in imports or I should check imports.
+// Original file had: import '../widgets/featured_card.dart';
+// But it used ProductCard in the code, so it must be imported or available.
+// Wait, looking at the previous view_file of home_content.dart, it didn't explicitly import ProductCard.
+// Ah, maybe it was a mistake in the original file or it was there and I missed it?
+// 225: return FeaturedCard(...
+// 354: return ProductCard(...
+// I don't see ProductCard import in the original file.
+// Let me check imports again.
+// 1: import 'dart:async';
+// 3: import 'package:flutter/material.dart';
+// 4: import 'package:fluttertoast/fluttertoast.dart';
+// 5: import '../services/api_service.dart';
+// 6: import '../widgets/featured_card.dart';
+// It seems ProductCard might not be imported or I missed a line?
+// No because the file view showed 1 to 379 lines.
+// Maybe ProductCard is in the same file as FeaturedCard? Unlikely.
+// Or maybe it was a compile error in the original project?
+// I will assume it's in ../widgets/product_card.dart based on common sense,
+// or maybe checking the widgets directory earlier:
+// {"name":"widgets", "isDir":true, "numChildren":3}
+// I will check widgets dir to be sure.
+
+import '../widgets/product_card.dart';
 
 class HomeContent extends StatefulWidget {
   @override
@@ -11,121 +35,16 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  List<dynamic> _products = [];
-  List<String> _categories = [];
-  String _selectedCategory = '';
-
   @override
   void initState() {
     super.initState();
-    _fetchProducts();
-    _fetchCategories();
-  }
-
-  Future<void> _fetchProducts() async {
-    try {
-      final result = await Future.any([
-        ApiService.getRandomProducts(5), // Your API call
-        Future.delayed(Duration(seconds: 3),
-            () => throw TimeoutException("Timeout")) // Timeout after 3 seconds
-      ]);
-
-      // If the result is the products, set them
-      setState(() {
-        _products = result;
-      });
-    } catch (error) {
-      Fluttertoast.showToast(
-        msg: "Failed to load products, No internet!!",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-
-      // Fallback to dummy products if the error occurs or timeout
-      setState(() {
-        _products = [
-          {
-            'id': 1,
-            'title': 'Dummy Product 1',
-            'price': 20.00,
-            'category': 'Category A',
-            'description': 'This is a dummy product.',
-            'image': 'dummy'
-          },
-          {
-            'id': 2,
-            'title': 'Dummy Product 2',
-            'price': 30.00,
-            'category': 'Category B',
-            'description': 'This is another dummy product.',
-            'image': 'dummy'
-          },
-          {
-            'id': 3,
-            'title': 'Dummy Product 3',
-            'price': 40.00,
-            'category': 'Category C',
-            'description': 'Dummy product for fallback.',
-            'image': 'dummy'
-          },
-          {
-            'id': 4,
-            'title': 'Dummy Product 4',
-            'price': 50.00,
-            'category': 'Category D',
-            'description': 'Fallback dummy product.',
-            'image': 'dummy'
-          },
-          {
-            'id': 5,
-            'title': 'Dummy Product 5',
-            'price': 60.00,
-            'category': 'Category E',
-            'description': 'More dummy products.',
-            'image': 'dummy'
-          }
-        ];
-      });
-    }
-  }
-
-  Future<void> _fetchCategories() async {
-    try {
-      final result = await Future.any([
-        ApiService.getCategories(), // Your API call
-        Future.delayed(Duration(seconds: 3),
-            () => throw TimeoutException("Timeout")) // Timeout after 3 seconds
-      ]);
-
-      // If the result is categories, set them
-      setState(() {
-        _categories = result;
-        _selectedCategory = _categories.isNotEmpty
-            ? _categories.first
-            : 'electronics'; // Default to 'electronics'
-      });
-    } catch (error) {
-      Fluttertoast.showToast(
-        msg: "Failed to load categories:  No internet!!",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-
-      // Fallback to dummy categories if the error occurs or timeout
-      setState(() {
-        _categories = [
-          "electronics",
-          "jewelery",
-          "men's clothing",
-          "women's clothing"
-        ];
-        _selectedCategory = _categories.first; // Default to the first category
-      });
-    }
+    // Fetch data when the widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final productProvider =
+          Provider.of<ProductProvider>(context, listen: false);
+      productProvider.fetchProducts();
+      productProvider.fetchCategories();
+    });
   }
 
   @override
@@ -195,179 +114,185 @@ class _HomeContentState extends State<HomeContent> {
           toolbarHeight: 100.0,
         ),
         backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        'Featured',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF0A2533),
-                        ),
-                      ),
-                    ),
-                    _products.isEmpty
-                        ? Center(child: CircularProgressIndicator())
-                        : SizedBox(
-                            height: 172,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: _products.length,
-                              itemBuilder: (context, index) {
-                                final product = _products[index];
-                                return FeaturedCard(
-                                  title: product['title'],
-                                  description: product['description'],
-                                  price: product['price'],
-                                  imageUrl: product['image'],
-                                );
-                              },
-                            ),
-                          ),
-                    SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Category',
+        body: Consumer<ProductProvider>(
+          builder: (context, provider, child) {
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            'Featured',
                             style: TextStyle(
-                              fontFamily: 'Sofia Pro',
                               fontSize: 20,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.bold,
                               color: Color(0xFF0A2533),
                             ),
                           ),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text(
-                              'See All',
-                              style: TextStyle(
-                                fontFamily: 'Sofia Pro',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF3DA0A7),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    _categories.isEmpty
-                        ? const Center(child: CircularProgressIndicator())
-                        : SizedBox(
-                            height: 50,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: _categories.length,
-                              itemBuilder: (context, index) {
-                                final category = _categories[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedCategory = category;
-                                    });
+                        ),
+                        provider.isLoadingProducts
+                            ? Center(child: CircularProgressIndicator())
+                            : SizedBox(
+                                height: 172,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: provider.products.length,
+                                  itemBuilder: (context, index) {
+                                    final product = provider.products[index];
+                                    return FeaturedCard(
+                                      title: product['title'],
+                                      description: product['description'],
+                                      price: product['price'],
+                                      imageUrl: product['image'],
+                                    );
                                   },
-                                  child: Container(
-                                    width: 119,
-                                    height: 41,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: _selectedCategory == category
-                                          ? const Color(0xFF3DA0A7)
-                                          : Color(0xFFF1F5F5),
-                                      borderRadius: BorderRadius.circular(40),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        category,
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          fontFamily: 'Sofia Pro',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: _selectedCategory == category
-                                              ? Colors.white
-                                              : Colors.black,
+                                ),
+                              ),
+                        SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Category',
+                                style: TextStyle(
+                                  fontFamily: 'Sofia Pro',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF0A2533),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {},
+                                child: const Text(
+                                  'See All',
+                                  style: TextStyle(
+                                    fontFamily: 'Sofia Pro',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF3DA0A7),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        provider.isLoadingCategories
+                            ? const Center(child: CircularProgressIndicator())
+                            : SizedBox(
+                                height: 50,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: provider.categories.length,
+                                  itemBuilder: (context, index) {
+                                    final category = provider.categories[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        provider.setSelectedCategory(category);
+                                      },
+                                      child: Container(
+                                        width: 119,
+                                        height: 41,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: provider.selectedCategory ==
+                                                  category
+                                              ? const Color(0xFF3DA0A7)
+                                              : Color(0xFFF1F5F5),
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            category,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontFamily: 'Sofia Pro',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color:
+                                                  provider.selectedCategory ==
+                                                          category
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                    SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Popular Recipes',
-                            style: TextStyle(
-                              fontFamily: 'Sofia Pro',
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF0A2533),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text(
-                              'See All',
-                              style: TextStyle(
-                                fontFamily: 'Sofia Pro',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF3DA0A7),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
+                        SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Popular Recipes',
+                                style: TextStyle(
+                                  fontFamily: 'Sofia Pro',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF0A2533),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {},
+                                child: const Text(
+                                  'See All',
+                                  style: TextStyle(
+                                    fontFamily: 'Sofia Pro',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF3DA0A7),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        provider.isLoadingProducts
+                            ? const Center(child: CircularProgressIndicator())
+                            : SizedBox(
+                                height: 250,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: provider.products.length,
+                                  itemBuilder: (context, index) {
+                                    final product = provider.products[index];
+                                    return ProductCard(
+                                      title: product['title'],
+                                      price: product['price'],
+                                      imageUrl: product['image'],
+                                      id: product['id'],
+                                    );
+                                  },
+                                ),
+                              ),
+                        SizedBox(
+                          height: 60,
+                        )
+                      ],
                     ),
-                    _products.isEmpty
-                        ? const Center(child: CircularProgressIndicator())
-                        : SizedBox(
-                            height: 250,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: _products.length,
-                              itemBuilder: (context, index) {
-                                final product = _products[index];
-                                return ProductCard(
-                                  title: product['title'],
-                                  price: product['price'],
-                                  imageUrl: product['image'],
-                                  id: product['id'],
-                                );
-                              },
-                            ),
-                          ),
-                    SizedBox(
-                      height: 60,
-                    )
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ));
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/api_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,55 +11,32 @@ class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool _isLoading = false;
-  String _errorMessage = '';
-
   void _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
 
     if (username.isEmpty || password.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please fill all fields';
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields')),
+      );
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    // Dismiss keyboard
+    FocusScope.of(context).unfocus();
 
-    try {
-      final apiService = ApiService();
-      final response = await apiService.login({
-        'username': username,
-        'password': password,
-      });
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.login(username, password);
 
-      // Validate response
-      final token = response['token'] ?? ''; // Default to empty string if null
-      if (token.isEmpty) {
-        throw Exception('Token is missing in the response');
-      }
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
-      await prefs.setString('username', username);
-
+    if (success) {
       Navigator.pushReplacementNamed(context, '/home');
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Failed to log in: $e';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: Padding(
@@ -75,17 +52,17 @@ class _LoginPageState extends State<LoginPage> {
               decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            if (_errorMessage.isNotEmpty) ...[
+            if (authProvider.errorMessage != null) ...[
               const SizedBox(height: 10),
               Text(
-                _errorMessage,
+                authProvider.errorMessage!,
                 style: TextStyle(color: Colors.red),
               ),
             ],
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _isLoading ? null : _login,
-              child: _isLoading
+              onPressed: authProvider.isLoading ? null : _login,
+              child: authProvider.isLoading
                   ? const CircularProgressIndicator()
                   : const Text('Log In'),
             ),

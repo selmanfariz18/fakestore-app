@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/api_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -12,62 +12,32 @@ class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool _isLoading = false;
-  String _errorMessage = '';
-
   void _signup() async {
     final username = _usernameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
 
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please fill all fields';
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields')),
+      );
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    FocusScope.of(context).unfocus();
 
-    try {
-      final apiService = ApiService();
-      final userData = {
-        'email': email,
-        'username': username,
-        'password': password,
-        'name': {'firstname': 'John', 'lastname': 'Doe'},
-        'address': {
-          'city': 'Kilcoole',
-          'street': '7835 new road',
-          'number': 3,
-          'zipcode': '12926-3874',
-        },
-        'phone': '1-570-236-7033',
-      };
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.signup(username, email, password);
 
-      final response = await apiService.signup(userData);
-
-      // Validate response fields
-      final savedUsername = response['username'] ?? 'Unknown';
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('username', savedUsername);
-
+    if (success) {
       Navigator.pushReplacementNamed(context, '/home');
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Failed to create account: $e';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Up'),
@@ -103,19 +73,19 @@ class _SignupPageState extends State<SignupPage> {
                 obscureText: true,
               ),
               const SizedBox(height: 16),
-              if (_errorMessage.isNotEmpty)
+              if (authProvider.errorMessage != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: Text(
-                    _errorMessage,
+                    authProvider.errorMessage!,
                     style: const TextStyle(color: Colors.red),
                   ),
                 ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _signup,
-                  child: _isLoading
+                  onPressed: authProvider.isLoading ? null : _signup,
+                  child: authProvider.isLoading
                       ? const CircularProgressIndicator(
                           valueColor:
                               AlwaysStoppedAnimation<Color>(Colors.white),
